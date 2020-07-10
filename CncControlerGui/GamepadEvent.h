@@ -48,6 +48,7 @@ class GamepadEvent : public wxThreadEvent {
 			float leftTrigger				= 0.0f;
 			float rightTrigger				= 0.0f;
 			
+			int   stickResolutionFactor		=    1;
 			float leftStickX				= 0.0f;
 			float leftStickY				= 0.0f;
 			float rightStickX				= 0.0f;

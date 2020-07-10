@@ -13,45 +13,94 @@
 // Pin setup
 // .....................................................................
 
-  const unsigned char MAX_PINS                            =  32;
-  const unsigned char PIN_X_STP                           =   2;
-  const unsigned char PIN_Y_STP                           =   3;
-  const unsigned char PIN_Z_STP                           =   4;
-  const unsigned char PIN_X_DIR                           =   5;
-  const unsigned char PIN_Y_DIR                           =   6;
-  const unsigned char PIN_Z_DIR                           =   7;
-
-  const unsigned char PIN_STEPPER_ENABLE                  =   8;
-
-  const unsigned char PIN_X_LIMIT                         =   9;
-  const unsigned char PIN_Y_LIMIT                         =  10;
-  const unsigned char PIN_Z_LIMIT                         =  11;
-
-  const unsigned char PIN_TOOL_ENABLE                     =  12;
-  const unsigned char PIN_EXTERNAL_INTERRUPT              =  13;
-
-  // A0 CNC Shield: Reset/Abort
-  // A1 CNC Shield: Feed Hold
-  // A2 CNC Shield: Cycle Start / Resume
-  // A3 CNC Shield: Collant Enabled
-  // A4 CNC Shield: free
-  // A5 CNC Shield: free
+  // choose one pin setup below exclusivly
+  #define PIN_SETUP_CNC_SHIELD                                  0
+  #define PIN_SETUP_CL57Y                                       1
   
-  #ifndef SKETCH_COMPILE   
-    #define PIN_INTERRUPT                              AE::PN_A0   
-  #else
-    #define PIN_INTERRUPT                                     A0
+  const unsigned char MAX_PINS                              =  32;
+
+  //--------------------------------------------------------------------
+  #if ( PIN_SETUP_CNC_SHIELD )
+  
+    #define SETUP_ID                                        100
+    
+    #define TOOL_STATE_OFF                                  PL_LOW
+    #define TOOL_STATE_ON                                   PL_HIGH 
+  
+    #define ENABLE_STATE_OFF                                PL_HIGH
+    #define ENABLE_STATE_ON                                 PL_LOW 
+
+    const unsigned char PIN_IR_1                            =   0;
+    const unsigned char PIN_IR_2                            =   0;
+    
+    const unsigned char PIN_X_STP                           =   2;
+    const unsigned char PIN_Y_STP                           =   3;
+    const unsigned char PIN_Z_STP                           =   4;
+    const unsigned char PIN_X_DIR                           =   5;
+    const unsigned char PIN_Y_DIR                           =   6;
+    const unsigned char PIN_Z_DIR                           =   7;
+  
+    const unsigned char PIN_STEPPER_ENABLE                  =   8;
+  
+    const unsigned char PIN_X_LIMIT                         =   9;
+    const unsigned char PIN_Y_LIMIT                         =  10;
+    const unsigned char PIN_Z_LIMIT                         =  11;
+  
+    const unsigned char PIN_TOOL_ENABLE                     =  12;
+    const unsigned char PIN_EXTERNAL_INTERRUPT              =  13;
+  
+    // A0 CNC Shield: Reset/Abort
+    // A1 CNC Shield: Feed Hold
+    // A2 CNC Shield: Cycle Start / Resume
+    // A3 CNC Shield: Collant Enabled
+    // A4 CNC Shield: free
+    // A5 CNC Shield: free
+    
+    #define PIN_INTERRUPT                                AE::PN_A0   
+    const unsigned char PIN_INTERRUPT_ID                    =   0;
+  
+    #define PIN_INTERRUPT_LED                            AE::PN_A3   
+    const unsigned char PIN_INTERRUPT_LED_ID                 =  3;
+    
   #endif  
-  const unsigned char PIN_INTERRUPT_ID                     =   0;
   
+  //--------------------------------------------------------------------
+  #if ( PIN_SETUP_CL57Y )
+  
+    #define SETUP_ID                                        200
+    
+    #define TOOL_STATE_OFF                                  PL_HIGH
+    #define TOOL_STATE_ON                                   PL_LOW
+  
+    #define ENABLE_STATE_OFF                                PL_HIGH
+    #define ENABLE_STATE_ON                                 PL_LOW 
 
-  #ifndef SKETCH_COMPILE   
-    #define PIN_INTERRUPT_LED                          AE::PN_A3   
-  #else
-    #define PIN_INTERRUPT_LED                                 A3   
-  #endif  
-  const unsigned char PIN_INTERRUPT_LED_ID                 =   3;
+    const unsigned char PIN_IR_1                            =   2;
+    const unsigned char PIN_IR_2                            =   3;
+
+    const unsigned char PIN_X_STP                           =   4;
+    const unsigned char PIN_Y_STP                           =   5;
+    const unsigned char PIN_Z_STP                           =   6;
+    const unsigned char PIN_X_DIR                           =   7;
+    const unsigned char PIN_Y_DIR                           =   8;
+    const unsigned char PIN_Z_DIR                           =   9;
   
+    const unsigned char PIN_EXTERNAL_INTERRUPT              =  10;
+    const unsigned char PIN_X_LIMIT                         =  10;
+    const unsigned char PIN_Y_LIMIT                         =  10;
+    const unsigned char PIN_Z_LIMIT                         =  10;
+    
+    const unsigned char PIN_STEPPER_ENABLE                  =  11;
+    const unsigned char PIN_TOOL_ENABLE                     =  12;
+  
+    #define PIN_INTERRUPT                                AE::PN_A0   
+    const unsigned char PIN_INTERRUPT_ID                    =   0;
+  
+    #define PIN_INTERRUPT_LED                            AE::PN_A3   
+    const unsigned char PIN_INTERRUPT_LED_ID                 =  3;
+    
+  #endif  
+
 // .....................................................................
 // Signals
 // .....................................................................
@@ -161,8 +210,8 @@
   
   const unsigned char PID_COMMON                          =  30;
   const unsigned char PID_CONTROLLER                      =  31;
-  const unsigned char PID_AXIS                            =  32;
-  const unsigned char PID_LAST_STEP_DIR                   =  33;
+  const unsigned char PID_SETUP_ID                        =  32;
+  const unsigned char PID_AXIS                            =  33;
   const unsigned char PID_ACCEL_START_SPEED               =  34;
   const unsigned char PID_ACCEL_STOP_SPEED                =  35;
      
@@ -314,12 +363,6 @@
   #define ON                                             true
   #define OFF                                            false
   
-  #define TOOL_STATE_OFF                                 PL_LOW
-  #define TOOL_STATE_ON                                  PL_HIGH 
-
-  #define ENABLE_STATE_OFF                               PL_HIGH
-  #define ENABLE_STATE_ON                                PL_LOW 
-
   #define EXTERNAL_INTERRRUPT_OFF                        PL_HIGH
   #define EXTERNAL_INTERRRUPT_ON                         PL_LOW
 

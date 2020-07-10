@@ -1724,17 +1724,17 @@ MainFrameBClass::MainFrameBClass(wxWindow* parent, wxWindowID id, const wxString
     flexGridSizer2205->AddGrowableRow(0);
     m_mainBookTest->SetSizer(flexGridSizer2205);
     
-    m_testCaseBook = new wxListbook(m_mainBookTest, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainBookTest, wxSize(-1,-1)), wxLB_DEFAULT|wxBK_DEFAULT);
+    m_testCaseBook = new wxListbook(m_mainBookTest, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainBookTest, wxSize(-1,-1)), wxLB_BOTTOM|wxBK_DEFAULT);
     m_testCaseBook->SetName(wxT("m_testCaseBook"));
     wxImageList* m_testCaseBook_il = new wxImageList(16, 16);
     m_testCaseBook->AssignImageList(m_testCaseBook_il);
     
-    flexGridSizer2205->Add(m_testCaseBook, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer2205->Add(m_testCaseBook, 0, wxALL|wxEXPAND, WXC_FROM_DIP(1));
     
     m_testIntervalPage = new wxPanel(m_testCaseBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_testCaseBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_testIntervalPageImgIndex;
     m_testIntervalPageImgIndex = m_testCaseBook_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-typedef")));
-    m_testCaseBook->AddPage(m_testIntervalPage, _("Interval"), false, m_testIntervalPageImgIndex);
+    m_testCaseBook->AddPage(m_testIntervalPage, _("Run in\nInterval"), false, m_testIntervalPageImgIndex);
     
     wxFlexGridSizer* flexGridSizer2089 = new wxFlexGridSizer(0, 1, 0, 0);
     flexGridSizer2089->SetFlexibleDirection( wxBOTH );
@@ -1978,7 +1978,7 @@ MainFrameBClass::MainFrameBClass(wxWindow* parent, wxWindowID id, const wxString
     m_testDimensions = new wxPanel(m_testCaseBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_testCaseBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_testDimensionsImgIndex;
     m_testDimensionsImgIndex = m_testCaseBook_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-typedef")));
-    m_testCaseBook->AddPage(m_testDimensions, _("Dimensions"), false, m_testDimensionsImgIndex);
+    m_testCaseBook->AddPage(m_testDimensions, _("Evaluate\nDimensions"), false, m_testDimensionsImgIndex);
     
     wxFlexGridSizer* flexGridSizer2319 = new wxFlexGridSizer(0, 1, 0, 0);
     flexGridSizer2319->SetFlexibleDirection( wxBOTH );
@@ -2226,7 +2226,7 @@ MainFrameBClass::MainFrameBClass(wxWindow* parent, wxWindowID id, const wxString
     m_testLimitPage = new wxPanel(m_testCaseBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_testCaseBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_testLimitPageImgIndex;
     m_testLimitPageImgIndex = m_testCaseBook_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-typedef")));
-    m_testCaseBook->AddPage(m_testLimitPage, _("Limit"), false, m_testLimitPageImgIndex);
+    m_testCaseBook->AddPage(m_testLimitPage, _("Evaluate\nLimit Switches"), false, m_testLimitPageImgIndex);
     
     wxFlexGridSizer* flexGridSizer2249 = new wxFlexGridSizer(2, 1, 0, 0);
     flexGridSizer2249->SetFlexibleDirection( wxBOTH );
@@ -2273,7 +2273,7 @@ MainFrameBClass::MainFrameBClass(wxWindow* parent, wxWindowID id, const wxString
     m_testToolPage = new wxPanel(m_testCaseBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_testCaseBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_testToolPageImgIndex;
     m_testToolPageImgIndex = m_testCaseBook_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-typedef")));
-    m_testCaseBook->AddPage(m_testToolPage, _("Tool"), false, m_testToolPageImgIndex);
+    m_testCaseBook->AddPage(m_testToolPage, _("Switch\nTool Power"), false, m_testToolPageImgIndex);
     
     wxFlexGridSizer* flexGridSizer2251 = new wxFlexGridSizer(2, 1, 0, 0);
     flexGridSizer2251->SetFlexibleDirection( wxBOTH );
@@ -2299,22 +2299,40 @@ MainFrameBClass::MainFrameBClass(wxWindow* parent, wxWindowID id, const wxString
     
     flexGridSizer215715->Add(m_staticLine225337, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    wxFlexGridSizer* flexGridSizer2275 = new wxFlexGridSizer(1, 1, 0, 0);
+    wxFlexGridSizer* flexGridSizer2275 = new wxFlexGridSizer(2, 1, 0, 0);
     flexGridSizer2275->SetFlexibleDirection( wxBOTH );
     flexGridSizer2275->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer2275->AddGrowableCol(0);
     flexGridSizer2275->AddGrowableRow(0);
     
-    flexGridSizer2251->Add(flexGridSizer2275, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer2251->Add(flexGridSizer2275, 1, wxALL|wxEXPAND, WXC_FROM_DIP(1));
     
-    m_testToggleTool = new wxToggleButton(m_testToolPage, wxID_ANY, _("Switch Tool On"), wxDefaultPosition, wxDLG_UNIT(m_testToolPage, wxSize(-1,-1)), 0);
-    m_testToggleTool->SetBackgroundColour(wxColour(wxT("rgb(255,128,128)")));
-    m_testToggleTool->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNHIGHLIGHT));
-    wxFont m_testToggleToolFont(18, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Segoe UI"));
-    m_testToggleTool->SetFont(m_testToggleToolFont);
-    m_testToggleTool->SetValue(false);
+    m_panel8592 = new wxPanel(m_testToolPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_testToolPage, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_panel8592->SetBackgroundColour(wxColour(wxT("rgb(255,128,128)")));
     
-    flexGridSizer2275->Add(m_testToggleTool, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer2275->Add(m_panel8592, 0, wxALL|wxEXPAND, WXC_FROM_DIP(1));
+    
+    wxFlexGridSizer* flexGridSizer8590 = new wxFlexGridSizer(1, 1, 0, 0);
+    flexGridSizer8590->SetFlexibleDirection( wxBOTH );
+    flexGridSizer8590->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer8590->AddGrowableCol(0);
+    flexGridSizer8590->AddGrowableRow(0);
+    m_panel8592->SetSizer(flexGridSizer8590);
+    
+    m_testToolPowerState = new wxStaticText(m_panel8592, wxID_ANY, _("Tool is switched 'On'"), wxDefaultPosition, wxDLG_UNIT(m_panel8592, wxSize(-1,-1)), wxALIGN_CENTRE);
+    m_testToolPowerState->SetBackgroundColour(wxColour(wxT("rgb(255,128,128)")));
+    m_testToolPowerState->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNHIGHLIGHT));
+    wxFont m_testToolPowerStateFont(18, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Segoe UI"));
+    m_testToolPowerState->SetFont(m_testToolPowerStateFont);
+    
+    flexGridSizer8590->Add(m_testToolPowerState, 0, wxALL|wxEXPAND|wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(0));
+    
+    m_testToolPowerBtn = new wxButton(m_testToolPage, wxID_ANY, _("Switch Tool On"), wxDefaultPosition, wxDLG_UNIT(m_testToolPage, wxSize(-1,80)), 0);
+    wxFont m_testToolPowerBtnFont(18, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Segoe UI"));
+    m_testToolPowerBtn->SetFont(m_testToolPowerBtnFont);
+    
+    flexGridSizer2275->Add(m_testToolPowerBtn, 0, wxALL|wxEXPAND, WXC_FROM_DIP(1));
+    m_testToolPowerBtn->SetMinSize(wxSize(-1,80));
     
     m_mainBookPreviewPanel = new wxPanel(m_mainViewBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainViewBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_mainViewBook->AddPage(m_mainBookPreviewPanel, _("Page"), false);
@@ -6066,7 +6084,7 @@ MainFrameBClass::MainFrameBClass(wxWindow* parent, wxWindowID id, const wxString
     m_testDimTakeZ->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testDimTakeOverZ), NULL, this);
     m_testDimTakeAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testDimTakeOverAll), NULL, this);
     m_testToggleEndSwitch->Connect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testEndSwitchEvaluation), NULL, this);
-    m_testToggleTool->Connect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testSwitchToolOnOff), NULL, this);
+    m_testToolPowerBtn->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testSwitchToolOnOff), NULL, this);
     m_monitorViewSelector->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MainFrameBClass::monitorViewSelectorSelected), NULL, this);
     m_outboundNotebook->Connect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler(MainFrameBClass::outboundBookChanged), NULL, this);
     m_outboundNotebook->Connect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING, wxNotebookEventHandler(MainFrameBClass::outboundBookChanging), NULL, this);
@@ -6341,7 +6359,7 @@ MainFrameBClass::~MainFrameBClass()
     m_testDimTakeZ->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testDimTakeOverZ), NULL, this);
     m_testDimTakeAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testDimTakeOverAll), NULL, this);
     m_testToggleEndSwitch->Disconnect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testEndSwitchEvaluation), NULL, this);
-    m_testToggleTool->Disconnect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testSwitchToolOnOff), NULL, this);
+    m_testToolPowerBtn->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrameBClass::testSwitchToolOnOff), NULL, this);
     m_monitorViewSelector->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MainFrameBClass::monitorViewSelectorSelected), NULL, this);
     m_outboundNotebook->Disconnect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler(MainFrameBClass::outboundBookChanged), NULL, this);
     m_outboundNotebook->Disconnect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING, wxNotebookEventHandler(MainFrameBClass::outboundBookChanging), NULL, this);

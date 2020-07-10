@@ -872,12 +872,12 @@ bool SerialEmulatorNULL::initializeFeedProfile(int32_t dx , int32_t dy , int32_t
 	const int32_t impulses  = impulseCalculator.calculate(dx, dy, dz);
 	const double speed		= getFeedSpeed_MMSec();
 	
-	const bool ret = speed ? initMove(impulses, speed) : true;
+	const bool ret = speed && impulses ? initMove(impulses, speed) : true;
 	
 	usToSleep = 0LL;
 	
 	if ( ret == false )
-		std::cerr << CNC_LOG_FUNCT << wxString::Format(": initMove(%ld, %lf) failed!", impulses, speed) << std::endl;
+		std::cerr << CNC_LOG_FUNCT << wxString::Format(": initMove(impulses=%ld, speed=%lf, dx=%ld, dy=%ld, dz=%ld) failed!", impulses, speed, dx, dy, dz) << std::endl;
 	
 	return ret;
 }

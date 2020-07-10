@@ -6,7 +6,7 @@
 #include "CncCtrl.h"
 #include "MainLoop.h"
 
-ByteBuffer            SWB;
+ByteBuffer SWB;
 
 #ifndef SKETCH_COMPILE 
   #define CNC_MAIN_LOOP_LOG_FUNCTION()  \
@@ -18,18 +18,22 @@ ByteBuffer            SWB;
   #define CNC_MAIN_LOOP_LOG_FUNCTION()
 #endif
 
+CncArduinoController* CONTROLLER = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////
 ArduinoMainLoop::ArduinoMainLoop() 
 /////////////////////////////////////////////////////////////////////////////////////
 : controller( new CncArduinoController() )
 {
+  CONTROLLER = controller;
 }
 /////////////////////////////////////////////////////////////////////////////////////
 ArduinoMainLoop::~ArduinoMainLoop() {
 /////////////////////////////////////////////////////////////////////////////////////
   delete controller; 
   controller = NULL;
+  
+  CONTROLLER = controller;
 }
 /////////////////////////////////////////////////////////////////////////////////////
 void ArduinoMainLoop::printSketchVersion() {
@@ -44,6 +48,8 @@ void ArduinoMainLoop::printSketchTimestamp() {
 /////////////////////////////////////////////////////////////////////////////////////
   Serial.write(RET_SOH);
     Serial.write(PID_TEXT);
+    Serial.print(SETUP_ID);
+    Serial.write('-');
     Serial.write(__TIMESTAMP__);
   Serial.write(MBYTE_CLOSE);
 }
@@ -658,38 +664,51 @@ void ArduinoMainLoop::setup() {
   Serial.flush();
 
   // digital pins
-  AE::pinMode(PIN_X_STP,            PM_OUTPUT);  AE::digitalWrite(PIN_X_STP,       PL_LOW);
-  AE::pinMode(PIN_Y_STP,            PM_OUTPUT);  AE::digitalWrite(PIN_Y_STP,       PL_LOW);
-  AE::pinMode(PIN_Z_STP,            PM_OUTPUT);  AE::digitalWrite(PIN_Z_STP,       PL_LOW);
-  AE::pinMode(PIN_X_DIR,            PM_OUTPUT);  AE::digitalWrite(PIN_X_DIR,       PL_LOW);
-  AE::pinMode(PIN_Y_DIR,            PM_OUTPUT);  AE::digitalWrite(PIN_Y_DIR,       PL_LOW);
-  AE::pinMode(PIN_Z_DIR,            PM_OUTPUT);  AE::digitalWrite(PIN_Z_DIR,       PL_LOW);
+  AE::pinMode(PIN_X_STP,            PM_OUTPUT);  AE::digitalWrite(PIN_X_STP,          PL_LOW);
+  AE::pinMode(PIN_Y_STP,            PM_OUTPUT);  AE::digitalWrite(PIN_Y_STP,          PL_LOW);
+  AE::pinMode(PIN_Z_STP,            PM_OUTPUT);  AE::digitalWrite(PIN_Z_STP,          PL_LOW);
+  AE::pinMode(PIN_X_DIR,            PM_OUTPUT);  AE::digitalWrite(PIN_X_DIR,          PL_LOW);
+  AE::pinMode(PIN_Y_DIR,            PM_OUTPUT);  AE::digitalWrite(PIN_Y_DIR,          PL_LOW);
+  AE::pinMode(PIN_Z_DIR,            PM_OUTPUT);  AE::digitalWrite(PIN_Z_DIR,          PL_LOW);
 
-  AE::pinMode(PIN_X_LIMIT,          PM_INPUT);   AE::digitalWrite(PIN_X_LIMIT,     LimitSwitch::LIMIT_SWITCH_OFF);
-  AE::pinMode(PIN_Y_LIMIT,          PM_INPUT);   AE::digitalWrite(PIN_Y_LIMIT,     LimitSwitch::LIMIT_SWITCH_OFF);
-  AE::pinMode(PIN_Z_LIMIT,          PM_INPUT);   AE::digitalWrite(PIN_Z_LIMIT,     LimitSwitch::LIMIT_SWITCH_OFF);
-  AE::pinMode(PIN_STEPPER_ENABLE,   PM_OUTPUT);  // state will be managed the reset below 
-  AE::pinMode(PIN_TOOL_ENABLE,      PM_OUTPUT);  // state will be managed the reset below 
+  AE::pinMode(PIN_X_LIMIT,          PM_INPUT);   AE::digitalWrite(PIN_X_LIMIT,        LimitSwitch::LIMIT_SWITCH_OFF);
+  AE::pinMode(PIN_Y_LIMIT,          PM_INPUT);   AE::digitalWrite(PIN_Y_LIMIT,        LimitSwitch::LIMIT_SWITCH_OFF);
+  AE::pinMode(PIN_Z_LIMIT,          PM_INPUT);   AE::digitalWrite(PIN_Z_LIMIT,        LimitSwitch::LIMIT_SWITCH_OFF);
+  AE::pinMode(PIN_STEPPER_ENABLE,   PM_OUTPUT);  AE::digitalWrite(PIN_STEPPER_ENABLE, ENABLE_STATE_OFF);
+  AE::pinMode(PIN_TOOL_ENABLE,      PM_OUTPUT);  AE::digitalWrite(PIN_TOOL_ENABLE,    TOOL_STATE_ON);
 
   // analog pins
-  AE::pinMode(PIN_INTERRUPT_LED,    PM_OUTPUT);  AE::analogWrite(PIN_INTERRUPT_LED,      ANALOG_LOW);
+  AE::pinMode(PIN_INTERRUPT_LED,    PM_OUTPUT);  AE::analogWrite(PIN_INTERRUPT_LED,   ANALOG_LOW);
 
   reset();
   controller->evaluateI2CAvailable();
 
- #if (0)
   #ifdef SKETCH_COMPILE 
-    #warning  ilegal use of pin 2  - temp for testing only!
-    pinMode(PIN_X_STP, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(PIN_X_STP), externalInterrupt, CHANGE);
+
+    if ( PIN_IR_1 != 0 ) {
+      pinMode(PIN_IR_1, INPUT_PULLUP);
+      attachInterrupt(digitalPinToInterrupt(PIN_IR_1), functorIR1, CHANGE);
+    }
+    
+    if ( PIN_IR_2 != 0 ) {
+      pinMode(PIN_IR_2, INPUT_PULLUP);
+      attachInterrupt(digitalPinToInterrupt(PIN_IR_2), functorIR2, CHANGE);
+    }
+    
   #endif
- #endif
 }
-
-void externalInterrupt() {
-  PRINT_DEBUG_VALUE("Interrupt", "hallo")
+///////////////////////////////////////////////////////
+void ArduinoMainLoop::functorIR1() {
+///////////////////////////////////////////////////////
+  PRINT_DEBUG_VALUE("Interrupt", "functorIR1")
+  //CONTROLLER->broadcastInterrupt();
 }
-
+///////////////////////////////////////////////////////
+void ArduinoMainLoop::functorIR2() {
+///////////////////////////////////////////////////////
+  PRINT_DEBUG_VALUE("Interrupt", "functorIR2")
+  //CONTROLLER->broadcastInterrupt();
+}
 ///////////////////////////////////////////////////////
 void ArduinoMainLoop::loop() {
 ///////////////////////////////////////////////////////

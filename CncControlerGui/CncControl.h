@@ -87,7 +87,7 @@ class CncControl {
 		// position flf
 		bool positionOutOfRangeFlag;
 		// power state
-		bool powerOn;
+		bool toolPowerState;
 		// Artificially Step Delay
 		unsigned int stepDelay;
 		// heartbeat value
@@ -254,7 +254,7 @@ class CncControl {
 		// Tool management
 		void switchToolOn();
 		void switchToolOff(bool force = false);
-		bool getToolState() { return powerOn; }
+		bool getToolState() { return toolPowerState; }
 		// Updates the config trace control
 		void updateCncConfigTrace();
 		

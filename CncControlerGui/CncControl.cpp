@@ -47,7 +47,7 @@ CncControl::CncControl(CncPortType pt)
 , durationCounter(0)
 , interruptState(false)
 , positionOutOfRangeFlag(false)
-, powerOn(false)
+, toolPowerState(TOOL_STATE_OFF)
 , stepDelay(0)
 , lastCncHeartbeatValue(0)
 , toolState()
@@ -75,7 +75,7 @@ CncControl::~CncControl() {
 ///////////////////////////////////////////////////////////////////
 	assert(serialPort);
 	
-	if ( getToolState() == true )
+	if ( getToolState() == TOOL_STATE_ON )
 		switchToolOff();
 	
 	// safty
@@ -327,7 +327,7 @@ bool CncControl::setup(bool doReset) {
 	
 	#warning use config values
 	accelList.push_back(FLT_FACT * 0.0);
-	accelList.push_back(FLT_FACT * 0.1);
+	accelList.push_back(FLT_FACT * 0.3);
 	accelList.push_back(FLT_FACT * 333.0/60);
 	accelList.push_back(FLT_FACT * 0.0);
 	accelList.push_back(FLT_FACT * 0.1);
@@ -350,7 +350,7 @@ bool CncControl::setup(bool doReset) {
 	}
 	
 	// enable stepper motors, do this here because to initiate a defined state
-	enableStepperMotors(true);
+	enableStepperMotors(ENABLE_STATE_ON);
 	
 	// speed setup
 	changeSpeedToDefaultSpeed_MM_MIN(CncSpeedRapid);
@@ -1038,8 +1038,8 @@ bool CncControl::SerialExecuteControllerCallback(const ContollerExecuteInfo& cei
 				case PID_TOOL_SWITCH:		if ( checkSetterCount(cei.setterPid, size, 1) == false )
 												return false;
 												
-											powerOn = (bool)cei.setterValueList.front();
-											displayToolState(powerOn);
+											toolPowerState = (bool)cei.setterValueList.front();
+											displayToolState(toolPowerState);
 											break;
 											
 				case PID_SPEED_FEED_MODE:	if ( checkSetterCount(cei.setterPid, size, 1) == false )
@@ -1357,8 +1357,8 @@ void CncControl::setToolState(bool defaultStyle) {
 	if ( defaultStyle == true ) {
 		toolState.setState(CncToolStateControl::red);
 	} else {
-		if ( powerOn == true ) 	toolState.setState(CncToolStateControl::green);
-		else 					toolState.setState(CncToolStateControl::red);
+		if ( toolPowerState == TOOL_STATE_ON ) 	toolState.setState(CncToolStateControl::green);
+		else 									toolState.setState(CncToolStateControl::red);
 	}
 }
 ///////////////////////////////////////////////////////////////////
@@ -1367,10 +1367,10 @@ void CncControl::switchToolOn() {
 	if ( isInterrupted() )
 		return;
 
-	if ( powerOn == false ) { 
-		if ( processSetter(PID_TOOL_SWITCH, 1) ) {
-			powerOn = true;
-			displayToolState(powerOn);
+	if ( toolPowerState == TOOL_STATE_OFF ) { 
+		if ( processSetter(PID_TOOL_SWITCH, TOOL_STATE_ON) ) {
+			toolPowerState = TOOL_STATE_ON;
+			displayToolState(toolPowerState);
 		}
 	}
 }
@@ -1380,17 +1380,17 @@ void CncControl::switchToolOff(bool force) {
 	if ( isInterrupted() )
 		return;
 
-	if ( powerOn == true || force == true ) {
-		if ( processSetter(PID_TOOL_SWITCH, 0) ) {
-			powerOn = false;
-			displayToolState(powerOn);
+	if ( toolPowerState == TOOL_STATE_ON || force == true ) {
+		if ( processSetter(PID_TOOL_SWITCH, TOOL_STATE_OFF) ) {
+			toolPowerState = TOOL_STATE_OFF;
+			displayToolState(toolPowerState);
 		}
 	}
 }
 ///////////////////////////////////////////////////////////////////
 void CncControl::displayToolState(const bool state) {
 ///////////////////////////////////////////////////////////////////
-	THE_APP->GetTestToggleTool()->SetValue(state);
+	THE_APP->decorateSwitchToolOnOff(state);
 	setToolState();
 }
 ///////////////////////////////////////////////////////////////////
@@ -1524,7 +1524,7 @@ bool CncControl::enableStepperMotors(bool s) {
 		return false;
 	}
 		
-	THE_APP->GetMiMotorEnableState()->Check( list.at(0) == 1L );
+	THE_APP->GetMiMotorEnableState()->Check( list.at(0) == (int32_t)ENABLE_STATE_ON );
 		
 	return true;
 }
@@ -1863,6 +1863,8 @@ bool CncControl::moveZToMid() {
 ///////////////////////////////////////////////////////////////////
 bool CncControl::manualMoveFinest(StepSensitivity s,  const CncLinearDirection x, const CncLinearDirection y, const CncLinearDirection z, bool correctLimit) {
 ///////////////////////////////////////////////////////////////////
+	CNC_PRINT_LOCATION;
+	
 	bool ret = false;
 	
 	const double xDim = 0.1 * x; // ~ 0.1 mm
@@ -1887,6 +1889,8 @@ bool CncControl::manualMoveFinest(StepSensitivity s,  const CncLinearDirection x
 void CncControl::manualContinuousMoveStop() {
 ///////////////////////////////////////////////////////////////////
 	if ( runContinuousMove == true ) {
+		CNC_PRINT_LOCATION;
+		
 		if ( getSerial()->sendSignal(SIG_QUIT_MOVE) == false ) {
 			std::cerr << "CncControl::manualContinuousMoveStop(): sendSignal(SIG_QUIT_MOVE) failed" << std::endl;
 		}
@@ -1904,9 +1908,10 @@ bool CncControl::manualContinuousMoveStart(StepSensitivity s, const CncLinearDir
 		return manualMoveFinest(s, x, y, z, correctLimit);
 	
 	// Setup
-	const double xDim = s/SSF * x;
-	const double yDim = s/SSF * y;
-	const double zDim = s/SSF * z;
+	#warning
+	const double xDim = 1000 * x;//s/SSF * x;
+	const double yDim = 1000 * y;//s/SSF * y;
+	const double zDim = 1000 * z;//s/SSF * z;
 	
 	bool ret = manualContinuousMoveStart_CtrlBased(xDim, yDim, zDim, correctLimit);
 	
@@ -1934,7 +1939,7 @@ bool CncControl::manualContinuousMoveStart_CtrlBased(const double xDim, const do
 	initNextDuration();
 	THE_CONTEXT->setAllowEventHandling(true);
 	activatePositionCheck(false);
-	enableStepperMotors(true);
+	enableStepperMotors(ENABLE_STATE_ON);
 	
 	double sX = xDim * THE_CONFIG->getCalculationFactX();
 	double sY = yDim * THE_CONFIG->getCalculationFactY();
@@ -1955,7 +1960,7 @@ bool CncControl::manualContinuousMoveStart_CtrlBased(const double xDim, const do
 	}
 	
 	// Move touch up
-	enableStepperMotors(false);
+	enableStepperMotors(ENABLE_STATE_OFF);
 	activatePositionCheck(true);
 	resetDurationCounter();
 	
@@ -2115,7 +2120,7 @@ bool CncControl::prepareSimpleMove(bool enaleEventHandling) {
 	initNextDuration();
 	THE_CONTEXT->setAllowEventHandling(enaleEventHandling);
 	activatePositionCheck(false);
-	enableStepperMotors(true);
+	enableStepperMotors(ENABLE_STATE_ON);
 	
 	// currently no checks implemented, if checks necessary do it here
 	return true;
@@ -2123,7 +2128,7 @@ bool CncControl::prepareSimpleMove(bool enaleEventHandling) {
 ///////////////////////////////////////////////////////////////////
 void CncControl::reconfigureSimpleMove(bool correctPositions) {
 ///////////////////////////////////////////////////////////////////
-	enableStepperMotors(false);
+	enableStepperMotors(ENABLE_STATE_OFF);
 	activatePositionCheck(true);
 	resetDurationCounter();
 	

@@ -66,6 +66,7 @@ class CncExternalViewBox;
 class CncArduinoEnvironment;
 class CncLCDPositionPanel;
 class CncManuallyMoveCoordinates;
+class CncSpeedPlayground;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -483,6 +484,8 @@ class MainFrame : public MainFrameBase, public GlobalConfigManager {
 		
 		void updateSpyDetailWindow();
 		
+		void decorateSwitchToolOnOff(bool state);
+		
 		//////////////////////////////////////////////////////////////////////////////////
 #		ifdef __WXMSW__
 			virtual WXLRESULT MSWWindowProc(WXUINT, WXWPARAM, WXLPARAM);
@@ -519,6 +522,8 @@ class MainFrame : public MainFrameBase, public GlobalConfigManager {
 		SerialThread* serialThread;
 		wxCriticalSection pSerialThreadCS;
 
+		CncSpeedPlayground*	cncSpeedPlayground;
+		
 		CncControl* getCncControl() 						{ return cnc; }
 		CncPreprocessor* getCncPreProcessor()				{ return cncPreprocessor; }
 		
@@ -733,8 +738,6 @@ class MainFrame : public MainFrameBase, public GlobalConfigManager {
 		
 		void createAnimationControl();
 		int showReferencePositionDlg(wxString msg);
-		
-		void decorateSwitchToolOnOff(bool state);
 		
 		///////////////////////////////////////////////////////////////
 		// search handling

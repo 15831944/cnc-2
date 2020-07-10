@@ -355,7 +355,9 @@ protected:
     wxPanel* m_testToolPage;
     wxStaticText* m_staticText211726;
     wxStaticLine* m_staticLine225337;
-    wxToggleButton* m_testToggleTool;
+    wxPanel* m_panel8592;
+    wxStaticText* m_testToolPowerState;
+    wxButton* m_testToolPowerBtn;
     wxPanel* m_mainBookPreviewPanel;
     wxPanel* m_filePreviewPlaceholder;
     wxPanel* m_panel4398;
@@ -1274,7 +1276,9 @@ public:
     wxPanel* GetTestLimitPage() { return m_testLimitPage; }
     wxStaticText* GetStaticText211726() { return m_staticText211726; }
     wxStaticLine* GetStaticLine225337() { return m_staticLine225337; }
-    wxToggleButton* GetTestToggleTool() { return m_testToggleTool; }
+    wxStaticText* GetTestToolPowerState() { return m_testToolPowerState; }
+    wxPanel* GetPanel8592() { return m_panel8592; }
+    wxButton* GetTestToolPowerBtn() { return m_testToolPowerBtn; }
     wxPanel* GetTestToolPage() { return m_testToolPage; }
     wxListbook* GetTestCaseBook() { return m_testCaseBook; }
     wxPanel* GetMainBookTest() { return m_mainBookTest; }

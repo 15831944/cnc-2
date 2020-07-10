@@ -1178,8 +1178,12 @@ bool Serial::evaluateResultWrapper(SerialFetchInfo& sfi, std::ostream& mutliByte
 bool Serial::evaluateResult(SerialFetchInfo& sfi, std::ostream& mutliByteStream) {
 ///////////////////////////////////////////////////////////////////
 	#define LOG_HANDSHAKE( ret ) \
-		if ( lastFetchResult.cmd  != sfi.command ) \
-			std::cout << "lastFetchResult.cmd  != sfi.command" << std::endl; \
+		if ( lastFetchResult.cmd != sfi.command ) \
+			if ( lastFetchResult.cmd != SIG_QUIT_MOVE && sfi.command != CMD_MOVE_UNIT_SIGNAL ) \
+				std::cout << "lastFetchResult.cmd != sfi.command --> " << '"' << ArduinoCMDs::getCMDLabel((int)lastFetchResult.cmd) << '"'\
+				                                                       << " != " \
+																	   << '"' << ArduinoCMDs::getCMDLabel((int)sfi.command) << '"'\
+																	   << std::endl; \
 		 \
 		lastFetchResult.ret = ret; \
 		cncControl->SerialCallback();

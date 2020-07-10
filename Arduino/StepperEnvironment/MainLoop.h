@@ -22,6 +22,9 @@ class ArduinoMainLoop {
     byte            reset();
     byte            performTest();
     void            printConfig();
+
+    static void     functorIR1();
+    static void     functorIR2();
     
   public:
     ArduinoMainLoop();

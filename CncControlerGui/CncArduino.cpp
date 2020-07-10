@@ -132,7 +132,6 @@ void ArduinoPIDs::init() {
 	pids[PID_MIN_SWITCH]                      .setup("Min Switch", "bool");  
 	pids[PID_MAX_SWITCH]                      .setup("Max Switch", "bool");
 	pids[PID_LIMIT]                           .setup("Limit State", "bool");
-	pids[PID_LAST_STEP_DIR]                   .setup("Last Step Direction", "");
 	pids[PID_X_LIMIT]                         .setup("X limit State", "bool");
 	pids[PID_Y_LIMIT]                         .setup("Y limit State", "bool");
 	pids[PID_Z_LIMIT]                         .setup("Z limit State", "bool");
@@ -142,6 +141,7 @@ void ArduinoPIDs::init() {
 	pids[PID_I2C_SUPPORT_VALUE]               .setup("I2C Support Value", "-");
 	
 	pids[PID_CONTROLLER]                      .setup("Cnc Controller", "");
+	pids[PID_SETUP_ID]                        .setup("Cnc Controller Setup ID", "");
 	pids[PID_TOOL_SWITCH]                     .setup("Tool Enabled State", "bool");
 	pids[PID_POS_REPLY_THRESHOLD]             .setup("Position Reply Threshold", "impulses");
 	pids[PID_PROBE_MODE]                      .setup("Probe Mode State", "bool");

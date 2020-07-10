@@ -91,26 +91,28 @@ wxThread::ExitCode GamepadThread::Entry() {
 ///////////////////////////////////////////////////////////////////
 void GamepadThread::evaluateNotifications(CncGamepad& gamepad, GamepadEvent& state) {
 ///////////////////////////////////////////////////////////////////
-	state.data.buttonA				= gamepad.stateButtonA();
-	state.data.buttonB 				= gamepad.stateButtonB();
-	state.data.buttonX 				= gamepad.stateButtonX();
-	state.data.buttonY 				= gamepad.stateButtonY();
-	state.data.buttonLeft 			= gamepad.stateButtonLeft();
-	state.data.buttonRight 			= gamepad.stateButtonRight();
-	state.data.buttonUp 			= gamepad.stateButtonUp();
-	state.data.buttonDown 			= gamepad.stateButtonDown();
-	state.data.buttonStart			= gamepad.stateButtonStart();
-	state.data.buttonBack			= gamepad.stateButtonBack();
-	state.data.buttonLeftStick		= gamepad.stateButtonLeftStick();
-	state.data.buttonRightStick		= gamepad.stateButtonRightStick();
-	state.data.buttonLeftShoulder	= gamepad.stateButtonLeftShoulder();
-	state.data.buttonRightShoulder	= gamepad.stateButtonRightShoulder();
+	state.data.buttonA					= gamepad.stateButtonA();
+	state.data.buttonB 					= gamepad.stateButtonB();
+	state.data.buttonX 					= gamepad.stateButtonX();
+	state.data.buttonY 					= gamepad.stateButtonY();
+	state.data.buttonLeft 				= gamepad.stateButtonLeft();
+	state.data.buttonRight 				= gamepad.stateButtonRight();
+	state.data.buttonUp 				= gamepad.stateButtonUp();
+	state.data.buttonDown 				= gamepad.stateButtonDown();
+	state.data.buttonStart				= gamepad.stateButtonStart();
+	state.data.buttonBack				= gamepad.stateButtonBack();
+	state.data.buttonLeftStick			= gamepad.stateButtonLeftStick();
+	state.data.buttonRightStick			= gamepad.stateButtonRightStick();
+	state.data.buttonLeftShoulder		= gamepad.stateButtonLeftShoulder();
+	state.data.buttonRightShoulder		= gamepad.stateButtonRightShoulder();
 	
-	state.data.leftTrigger			= gamepad.getLeftTrigger();
-	state.data.rightTrigger			= gamepad.getRightTrigger();
+	state.data.leftTrigger				= gamepad.getLeftTrigger();
+	state.data.rightTrigger				= gamepad.getRightTrigger();
 	
-	state.data.leftStickX			= gamepad.getLeftStickX();
-	state.data.leftStickY			= gamepad.getLeftStickY();
-	state.data.rightStickX			= gamepad.getRightStickX();
-	state.data.rightStickY			= gamepad.getRightStickY();
+	state.data.stickResolutionFactor	= gamepad.getStickResolutionFactor();
+	
+	state.data.leftStickX				= gamepad.getLeftStickX();
+	state.data.leftStickY				= gamepad.getLeftStickY();
+	state.data.rightStickX				= gamepad.getRightStickX();
+	state.data.rightStickY				= gamepad.getRightStickY();
 }

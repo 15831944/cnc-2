@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>  
+#include <sstream>
 #include <sstream>
 #include <fstream>
 #include <cctype>
@@ -246,6 +248,7 @@ MainFrame::MainFrame(wxWindow* parent, wxFileConfig* globalConfig)
 , updateManagerThread(NULL)
 , gamepadThread(NULL)
 , serialThread(NULL)
+, cncSpeedPlayground(NULL)
 , isDebugMode(false)
 , isZeroReferenceValid(false)
 , canClose(true)
@@ -841,7 +844,7 @@ void MainFrame::registerGuiControls() {
 	registerGuiControl(m_3D_Refreh);
 	registerGuiControl(m_3D_Clear);
 	registerGuiControl(m_cbContentPosSpy);
-	registerGuiControl(m_testToggleTool);
+	registerGuiControl(m_testToolPowerBtn);
 	registerGuiControl(m_testToggleEndSwitch);
 	registerGuiControl(m_portSelector);
 	registerGuiControl(m_portSelectorSec);
@@ -1501,6 +1504,37 @@ void MainFrame::onSerialThreadMessage(SerialEvent& event) {
 ///////////////////////////////////////////////////////////////////
 	const char type = (char)event.message.type;
 	cncArduinoEnvironment->appendMessage(type, event.message.getMessage(), event.message.getContext());
+	
+	bool alreadyTraced = cncArduinoEnvironment->IsShownOnScreen();
+	if ( cncSpeedPlayground && cncSpeedPlayground->IsShownOnScreen() ) {
+		alreadyTraced = true;
+		
+		cncSpeedPlayground->appendArdoMessage(type, event.message.getMessage(), event.message.getContext());
+	}
+	
+	//-------------------------------------------------------------
+	auto log2Std = [&](std::ostream & o) {
+		o << "ArdoMsg: " << type 
+						 << " " 
+						 << event.message.getMessage() 
+						 /*
+						 << std::setw(80) 
+						 << " [[ " 
+						 << event.message.getContext() 
+						 << " ]]"
+						 */ 
+						 << std::endl;
+	};
+	
+	if ( alreadyTraced == false ) {
+		switch ( type ) {
+			case 'E':	log2Std(std::cerr); break;
+			case 'D':
+			case 'W':	log2Std(std::clog); break;
+			case 'S':	log2Std(cnc::cex1); break;
+			default:	log2Std(std::cout);
+		}
+	}
 }
 ///////////////////////////////////////////////////////////////////
 void MainFrame::onSerialThreadData(SerialEvent& event) {
@@ -3394,7 +3428,7 @@ bool MainFrame::processTestTemplate() {
 		msg << "Nothing will be done.\n" ;
 		
 		wxMessageDialog dlg(this, msg, _T("MainFrame::processTestTemplate(): Not registered test . . . "), 
-							wxOK||wxCENTRE|wxICON_QUESTION);
+							wxOK|wxCENTRE|wxICON_QUESTION);
 		
 		dlg.ShowModal();
 		return true;
@@ -4012,7 +4046,7 @@ bool MainFrame::processTemplateWrapper(bool confirm) {
 		cnc->resetSetterMap();
 		cnc->processSetter(PID_SEPARATOR, SEPARARTOR_RUN);
 		cnc->enableProbeMode(THE_CONTEXT->isProbeMode());
-		cnc->enableStepperMotors(true);
+		cnc->enableStepperMotors(ENABLE_STATE_ON);
 
 		wxString fn (getCurrentTemplatePathFileName());
 		if ( fn.IsEmpty() == true )
@@ -4140,7 +4174,7 @@ bool MainFrame::processTemplateIntern() {
 	cnc->resetSetterMap();
 	cnc->processSetter(PID_SEPARATOR, SEPARARTOR_RUN);
 	cnc->enableProbeMode(THE_CONTEXT->isProbeMode());
-	cnc->enableStepperMotors(true);
+	cnc->enableStepperMotors(ENABLE_STATE_ON);
 	*/
 	
 	bool ret = false;
@@ -4211,7 +4245,7 @@ bool MainFrame::processTemplateIntern() {
 		//}
 	}
 	
-	cnc->enableStepperMotors(false);
+	cnc->enableStepperMotors(ENABLE_STATE_OFF);
 	
 	motionMonitor->popProcessMode();
 	
@@ -4526,7 +4560,7 @@ void MainFrame::updateFileContentPosition(long x, long y) {
 void MainFrame::requestEnableStepperMotors(wxCommandEvent& event) {
 ///////////////////////////////////////////////////////////////////
 	wxASSERT(cnc);
-	cnc->enableStepperMotors(m_miMotorEnableState->IsChecked());
+	cnc->enableStepperMotors(m_miMotorEnableState->IsChecked() ? ENABLE_STATE_ON : ENABLE_STATE_OFF);
 }
 ///////////////////////////////////////////////////////////////////
 void MainFrame::moveHome(wxCommandEvent& event) {
@@ -5962,18 +5996,20 @@ void MainFrame::rcReset(wxCommandEvent& event) {
 ///////////////////////////////////////////////////////////////////
 void MainFrame::decorateSwitchToolOnOff(bool state) {
 ///////////////////////////////////////////////////////////////////
-	if ( state == true ) {
-		m_testToggleTool->SetLabel("Switch Tool Off");
-		m_testToggleTool->SetBackgroundColour(wxColour(255,128,128));
-		m_testToggleTool->SetForegroundColour(*wxWHITE);
-	} else {
-		m_testToggleTool->SetLabel("Switch Tool On");
-		m_testToggleTool->SetBackgroundColour(*wxGREEN);
-		m_testToggleTool->SetForegroundColour(*wxBLACK);
-	}
+	m_testToolPowerBtn->SetLabel            (state == TOOL_STATE_OFF ? "Switch Tool 'On'"        : "Switch Tool 'Off'");
+
+	m_testToolPowerState->SetLabel           (state == TOOL_STATE_OFF ? "Tool is switched 'Off'" : "Tool is switched 'On'");
+	m_testToolPowerState->SetBackgroundColour(state == TOOL_STATE_OFF ? wxColour(255,128,128)    : *wxGREEN);
+	m_testToolPowerState->SetForegroundColour(state == TOOL_STATE_OFF ? *wxWHITE                 : *wxBLACK);
 	
-	m_testToggleTool->Refresh(true);
-	m_testToggleTool->Update();
+	m_testToolPowerState->Refresh(true);
+	m_testToolPowerState->Update();
+	
+	if ( m_testToolPowerState->GetParent() ) {
+		m_testToolPowerState->GetParent()->SetBackgroundColour(state == TOOL_STATE_OFF ? wxColour(255,128,128)    : *wxGREEN);
+		m_testToolPowerState->GetParent()->Refresh(true);
+		m_testToolPowerState->GetParent()->Update();
+	}
 }
 ///////////////////////////////////////////////////////////////////
 void MainFrame::testSwitchToolOnOff(wxCommandEvent& event) {
@@ -5981,33 +6017,37 @@ void MainFrame::testSwitchToolOnOff(wxCommandEvent& event) {
 	wxASSERT(cnc);
 	
 	if ( cnc->isConnected() == false ) {
-		std::cerr << "Not connetced, nothing will be processed." << std::endl;
+		std::cerr << "Not connected, nothing will be processed." << std::endl;
 		return;
 	}
 	
-	decorateSwitchToolOnOff(m_testToggleTool->GetValue());
-	m_testToggleTool->Enable(false);
+	bool cncToolState = cnc->getToolState();
 	
-	if ( m_testToggleTool->GetValue() == true ) {
-		disableControls();
-		m_testToggleEndSwitch->Enable(false);
-		m_testToggleTool->Enable(true);
+	if ( cncToolState == TOOL_STATE_OFF ) {
 		
+		const wxString hdl("Switch tool on . . . ");
+		const wxString msg("Do you really want to switch the tool power on?");
+		wxMessageDialog dlg(this, msg, hdl, wxYES | wxNO | wxICON_QUESTION | wxCENTRE);
+		
+		if ( dlg.ShowModal() == wxID_NO ) 
+			return;
+	}
+	
+	if ( cncToolState == TOOL_STATE_OFF ) {
 		cnc->switchToolOn();
 		startAnimationControl();
 		
 	} else {
-		m_testToggleTool->SetLabel("Switch Tool On");
-		m_testToggleTool->SetBackgroundColour(*wxGREEN);
-		m_testToggleTool->SetForegroundColour(*wxBLACK);
-		
-		enableControls();
-		
 		cnc->switchToolOff();
 		stopAnimationControl();
 	}
 	
-	m_testToggleTool->Enable(true);
+	cncToolState = cnc->getToolState();
+	enableControls(cncToolState == TOOL_STATE_OFF);
+	
+	if ( m_testToolPowerBtn->IsShownOnScreen() )
+		m_testToolPowerBtn->Enable(true);
+		
 	updateSetterList();
 }
 ///////////////////////////////////////////////////////////////////
@@ -6177,9 +6217,8 @@ void MainFrame::testCaseBookChanged(wxListbookEvent& event) {
 		case TestBookSelection::VAL::LIMIT:		break;
 		
 		case TestBookSelection::VAL::TOOL:		if ( cnc != NULL )
-													m_testToggleTool->SetValue(cnc->getToolState());
+													decorateSwitchToolOnOff(cnc->getToolState());
 													
-												decorateSwitchToolOnOff(m_testToggleTool->GetValue());
 												break;
 												
 	}
@@ -7722,13 +7761,15 @@ SerialThread* MainFrame::getSerialThread(SerialThreadStub* sts) {
 /////////////////////////////////////////////////////////////////////
 void MainFrame::openSpeedPlayground(wxCommandEvent& event) {
 /////////////////////////////////////////////////////////////////////
-	static CncSpeedPlayground* csp = NULL;
-	
-	if ( csp == NULL )
-		csp = new CncSpeedPlayground(this);
+	if ( cncSpeedPlayground == NULL )
+		cncSpeedPlayground = new CncSpeedPlayground(this);
 		
-	csp->Show(csp->IsShownOnScreen() == false);
+	cncSpeedPlayground->Show(cncSpeedPlayground->IsShownOnScreen() == false);
 }
+
+
+
+
 void MainFrame::changeSpeedConfigSlider(wxScrollEvent& event)
 {
 }

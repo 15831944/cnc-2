@@ -2848,11 +2848,12 @@ Panel</label>
                       <growablerows>0</growablerows>
                       <object class="sizeritem">
                         <flag>wxALL|wxEXPAND</flag>
-                        <border>5</border>
+                        <border>1</border>
                         <object class="wxListbook" name="m_testCaseBook">
-                          <style>wxLB_DEFAULT|wxBK_DEFAULT</style>
+                          <style>wxLB_BOTTOM|wxBK_DEFAULT</style>
                           <object class="listbookpage">
-                            <label>Interval</label>
+                            <label>Run in
+Interval</label>
                             <bitmap>bitmaps/16-typedef.png</bitmap>
                             <selected>0</selected>
                             <object class="wxPanel" name="m_testIntervalPage">
@@ -3312,7 +3313,8 @@ Panel</label>
                             </object>
                           </object>
                           <object class="listbookpage">
-                            <label>Dimensions</label>
+                            <label>Evaluate
+Dimensions</label>
                             <bitmap>bitmaps/16-typedef.png</bitmap>
                             <selected>0</selected>
                             <object class="wxPanel" name="m_testDimensions">
@@ -3754,7 +3756,8 @@ Panel</label>
                             </object>
                           </object>
                           <object class="listbookpage">
-                            <label>Limit</label>
+                            <label>Evaluate
+Limit Switches</label>
                             <bitmap>bitmaps/16-typedef.png</bitmap>
                             <selected>0</selected>
                             <object class="wxPanel" name="m_testLimitPage">
@@ -3837,7 +3840,8 @@ Panel</label>
                             </object>
                           </object>
                           <object class="listbookpage">
-                            <label>Tool</label>
+                            <label>Switch
+Tool Power</label>
                             <bitmap>bitmaps/16-typedef.png</bitmap>
                             <selected>0</selected>
                             <object class="wxPanel" name="m_testToolPage">
@@ -3886,23 +3890,56 @@ Panel</label>
                                 </object>
                                 <object class="sizeritem" name="flexGridSizer2275">
                                   <flag>wxALL|wxEXPAND</flag>
-                                  <border>5</border>
+                                  <border>1</border>
                                   <option>1</option>
                                   <object class="wxFlexGridSizer">
                                     <cols>1</cols>
-                                    <rows>1</rows>
+                                    <rows>2</rows>
                                     <vgap>0</vgap>
                                     <hgap>0</hgap>
                                     <growablecols>0</growablecols>
                                     <growablerows>0</growablerows>
                                     <object class="sizeritem">
                                       <flag>wxALL|wxEXPAND</flag>
-                                      <border>5</border>
-                                      <object class="wxToggleButton" name="m_testToggleTool">
-                                        <style/>
-                                        <label>Switch Tool On</label>
+                                      <border>1</border>
+                                      <object class="wxPanel" name="m_panel8592">
+                                        <style>wxTAB_TRAVERSAL</style>
                                         <bg>#FF8080</bg>
-                                        <fg>wxSYS_COLOUR_BTNHIGHLIGHT</fg>
+                                        <object class="wxFlexGridSizer">
+                                          <cols>1</cols>
+                                          <rows>1</rows>
+                                          <vgap>0</vgap>
+                                          <hgap>0</hgap>
+                                          <growablecols>0</growablecols>
+                                          <growablerows>0</growablerows>
+                                          <object class="sizeritem">
+                                            <flag>wxALL|wxEXPAND|wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+                                            <object class="wxStaticText" name="m_testToolPowerState">
+                                              <label>Tool is switched 'On'</label>
+                                              <style>wxALIGN_CENTRE</style>
+                                              <bg>#FF8080</bg>
+                                              <fg>wxSYS_COLOUR_BTNHIGHLIGHT</fg>
+                                              <font>
+                                                <size>18</size>
+                                                <style>normal</style>
+                                                <weight>bold</weight>
+                                                <family>swiss</family>
+                                                <underlined>0</underlined>
+                                                <face>Segoe UI</face>
+                                              </font>
+                                            </object>
+                                          </object>
+                                        </object>
+                                      </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                      <flag>wxALL|wxEXPAND</flag>
+                                      <border>1</border>
+                                      <minsize>-1,80</minsize>
+                                      <object class="wxButton" name="m_testToolPowerBtn">
+                                        <label>Switch Tool On</label>
+                                        <style/>
+                                        <size>-1,80</size>
                                         <font>
                                           <size>18</size>
                                           <style>normal</style>
@@ -3911,7 +3948,8 @@ Panel</label>
                                           <underlined>0</underlined>
                                           <face>Segoe UI</face>
                                         </font>
-                                        <checked>0</checked>
+                                        <bitmapposition>wxLEFT</bitmapposition>
+                                        <default>0</default>
                                       </object>
                                     </object>
                                   </object>

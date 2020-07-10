@@ -143,24 +143,30 @@ void CncGamepadControllerState::processPosition(const GamepadEvent& state) {
 void CncGamepadControllerState::managePositionViaStick(const GamepadEvent& state) {
 ///////////////////////////////////////////////////////////////////
 	typedef CncLinearDirection CLD;
-	
+	const float threshold = (float)state.data.stickResolutionFactor / 4;
+
 	// z navigation
-	if ( state.data.rightStickY != 0.0f ) {
+	if ( state.data.rightStickY <= -threshold || state.data.rightStickY >= +threshold ) {
 		
 		zNavigationActive = true;
-		if ( state.data.rightStickY > 0.0f )		APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncNoneDir, CLD::CncPosDir);
-		if (  state.data.rightStickY < 0.0f )		APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncNoneDir, CLD::CncNegDir);
-			
+		
+		CLD dz = state.data.rightStickY > 0.0f ? CLD::CncPosDir : CLD::CncNegDir;
+		APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncNoneDir, dz);
+		
 	} else {
 	
 		// xy navigation
-		if ( state.data.leftStickX != 0.0f || state.data.leftStickY != 0.0f ) {
-			
+		if (    state.data.leftStickX <= -threshold  
+		     || state.data.leftStickX >= +threshold 
+		     || state.data.leftStickY <= -threshold 
+		     || state.data.leftStickY >= +threshold 
+		   )
+		{
 			xyNavigationActive = true;
-			if ( state.data.leftStickX > 0.0f )		APP_PROXY::manualContinuousMoveStart(CLD::CncPosDir,  CLD::CncNoneDir, CLD::CncNoneDir);
-			if (  state.data.leftStickX < 0.0f )	APP_PROXY::manualContinuousMoveStart(CLD::CncNegDir,  CLD::CncNoneDir, CLD::CncNoneDir);
-			if ( state.data.leftStickY > 0.0f )		APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncPosDir,  CLD::CncNoneDir);
-			if (  state.data.leftStickY < 0.0f )	APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncNegDir,  CLD::CncNoneDir);
+			
+			CLD dx = state.data.leftStickX > 0.0f ? CLD::CncPosDir : CLD::CncNegDir;
+			CLD dy = state.data.leftStickY > 0.0f ? CLD::CncPosDir : CLD::CncNegDir;
+			APP_PROXY::manualContinuousMoveStart(dx, dy,  CLD::CncNoneDir);
 		}
 	}
 	
@@ -181,22 +187,29 @@ void CncGamepadControllerState::managePositionViaStick(const GamepadEvent& state
 ///////////////////////////////////////////////////////////////////
 void CncGamepadControllerState::managePositionViaNavi(const GamepadEvent& state) {
 ///////////////////////////////////////////////////////////////////
-	bool left 	= state.data.buttonLeft; 
-	bool right 	= state.data.buttonRight;
-	bool up 	= state.data.buttonUp;
-	bool down 	= state.data.buttonDown;
+	const bool left		= state.data.buttonLeft; 
+	const bool right	= state.data.buttonRight;
+	const bool up		= state.data.buttonUp;
+	const bool down		= state.data.buttonDown;
 	
 	typedef CncLinearDirection CLD;
+	CLD dx = CLD::CncNoneDir;
+	CLD dy = CLD::CncNoneDir;
+	CLD dz = CLD::CncNoneDir;
 	
 	switch ( posCtrlMode ) {
-		case PCM_NAV_XY:	if ( left  == true ) 	{ APP_PROXY::manualContinuousMoveStart(CLD::CncNegDir,  CLD::CncNoneDir, CLD::CncNoneDir); }
-							if ( right == true ) 	{ APP_PROXY::manualContinuousMoveStart(CLD::CncPosDir,  CLD::CncNoneDir, CLD::CncNoneDir); }
-							if ( up    == true ) 	{ APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncPosDir,  CLD::CncNoneDir); }
-							if ( down  == true ) 	{ APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncNegDir,  CLD::CncNoneDir); }
+		case PCM_NAV_XY:	if ( left  == true ) 	dx = CLD::CncNegDir; 
+							if ( right == true ) 	dx = CLD::CncPosDir; 
+							if ( up    == true ) 	dy = CLD::CncPosDir;
+							if ( down  == true ) 	dy = CLD::CncNegDir;
+							
+							APP_PROXY::manualContinuousMoveStart(dx, dy,  CLD::CncNoneDir);
 							break;
 							
-		case PCM_NAV_Z:		if ( up    == true ) 	{ APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncNoneDir, CLD::CncPosDir); }
-							if ( down  == true ) 	{ APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncNoneDir, CLD::CncNegDir); }
+		case PCM_NAV_Z:		if ( up    == true ) 	dz = CLD::CncPosDir;
+							if ( down  == true ) 	dz = CLD::CncNegDir;
+							
+							APP_PROXY::manualContinuousMoveStart(CLD::CncNoneDir, CLD::CncNoneDir, dz);
 							break;
 							
 		default:			return;

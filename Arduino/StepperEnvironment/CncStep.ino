@@ -77,7 +77,6 @@ void  CncArduinoStepper::printConfig() {
     StepperParameter::print(PID_MIN_SWITCH,                       minReached);
     StepperParameter::print(PID_MAX_SWITCH,                       maxReached);
     StepperParameter::print(PID_LIMIT,                            readLimitState());
-    StepperParameter::print(PID_LAST_STEP_DIR,                    getStepDirection());
 }
 /////////////////////////////////////////////////////////////////////////////////////
 bool CncArduinoStepper::isReadyToRun() {
@@ -153,22 +152,20 @@ int8_t CncArduinoStepper::readLimitState(int dir) {
   return LimitSwitch::LIMIT_UNKNOWN;
 }
 //////////////////////////////////////////////////////////////////////////////
-bool CncArduinoStepper::checkLimit(int dir) {
+bool CncArduinoStepper::isLimitPinOn() {
 //////////////////////////////////////////////////////////////////////////////
   static short minLimitCnt = 0;
   static short maxLimitCnt = 0;
 
   // ------------------------------------------------------------------------
   auto setMinReached = [&](bool state) {
-    // avoid hysteresis
+    
     if ( maxReached == true ) {
-      minLimitCnt++;
-      
-      if ( minLimitCnt == 3 ) {
+      // avoid switch bouncing
+      if ( ++minLimitCnt == 3 ) {
         minLimitCnt = 0;
         minReached = state;
       }
-     
     } else {
       minReached = state;
     }
@@ -178,15 +175,13 @@ bool CncArduinoStepper::checkLimit(int dir) {
 
   // ------------------------------------------------------------------------
   auto setMaxReached = [&](bool state) {
-    // avoid hysteresis
+    
     if ( minReached == true ) {
-      maxLimitCnt++;
-      
-      if ( maxLimitCnt == 3 ) {
+      // avoid switch bouncing
+      if ( ++maxLimitCnt == 3 ) {
         maxLimitCnt = 0;
         maxReached = state;
       }
-      
     } else {
       maxReached = state;
     }
@@ -198,32 +193,32 @@ bool CncArduinoStepper::checkLimit(int dir) {
   const int val = AE::digitalRead(lmtPin);
   if ( val == LimitSwitch::LIMIT_SWITCH_ON ) {
 
-    // unclear sitiuation avoid movement!
-    if ( stepDirection == SD_UNKNOWN ) {
-      controller->sendCurrentLimitStates(FORCE);
-      controller->broadcastInterrupt();
-      return true;
-    }
+    switch ( stepDirection ) {
 
-    // enable the move in the opposite direction
-    if ( minReached && dir > 0 )
-      return false;
-      
-    // enable the move in the opposite direction
-    if ( maxReached && dir < 0 )
-      return false;
-      
-    switch ( dir ) {
-      
-      case DIRECTION_INC:   setMaxReached(true);
-                            return true;
-      
-      case DIRECTION_DEC:   setMinReached(true);
-                            return true;
+      case SD_UNKNOWN:  // unclear sitiuation avoid movement!
+                        controller->sendCurrentLimitStates(FORCE);
+                        controller->broadcastInterrupt();
+                        return true;
+                        
+      case SD_INC:      // enable the move in the opposite direction
+                        if ( minReached )
+                          return false;
+                          
+                        setMaxReached(true);
+                        return true;
+
+      case SD_DEC:      // enable the move in the opposite direction
+                        if ( maxReached && stepDirection < 0 )
+                          return false;
+
+                        setMinReached(true);
+                        return true;
     }
   } else {
+    
     // reset limit state
     if ( minReached == true || maxReached == true ) {
+      
       setMinReached(false);
       setMaxReached(false);
     }
@@ -282,7 +277,7 @@ byte CncArduinoStepper::initiateStep() {
     return RET_INTERRUPT;
   }
 
-  if ( checkLimit(stepDirection) == true )
+  if ( isLimitPinOn() == true )
     return RET_LIMIT;
 
   if ( stepPhase == true )

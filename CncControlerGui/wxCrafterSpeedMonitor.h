@@ -149,6 +149,23 @@ protected:
     wxStaticText* m_staticMinZ;
     wxSlider* m_sliderZ;
     wxStaticText* m_staticMaxZ;
+    wxStaticText* m_staticText313;
+    wxStaticLine* m_staticLine14126;
+    wxStaticText* m_staticText318;
+    wxTextCtrl* m_ebSpecialTriggerImpluse1;
+    wxStaticText* m_staticText320;
+    wxTextCtrl* m_ebSpecialTriggerSpeed1;
+    wxStaticText* m_staticText326;
+    wxStaticText* m_staticText3188;
+    wxTextCtrl* m_ebSpecialTriggerImpluse2;
+    wxStaticText* m_staticText32010;
+    wxTextCtrl* m_ebSpecialTriggerSpeed2;
+    wxStaticText* m_staticText32613;
+    wxStaticText* m_staticText318815;
+    wxTextCtrl* m_ebSpecialTriggerImpluse3;
+    wxStaticText* m_staticText3201018;
+    wxTextCtrl* m_ebSpecialTriggerSpeed3;
+    wxStaticText* m_staticText3261320;
     wxStaticText* m_staticText14711;
     wxStaticLine* m_staticLine1412;
     wxStaticText* m_staticText230385;
@@ -171,7 +188,14 @@ protected:
     wxStaticLine* m_staticLine141;
     wxCheckBox* m_cbWithAcceleration;
     wxCheckBox* m_cbSpeedRelative;
+    wxCheckBox* m_cbEnhancedTracing;
     wxCheckBox* m_cbRealtime;
+    wxCheckBox* m_cbSpecialSpeedDisplayHeight;
+    wxTextCtrl* m_ebSpecialSpeedDisplayHeightValue;
+    wxStaticText* m_staticText302;
+    wxCheckBox* m_cbSpecialAccelDisplayWidth;
+    wxTextCtrl* m_ebSpecialAccelDisplayWidthValue;
+    wxStaticText* m_staticText3025;
     wxStaticLine* m_staticLine294;
     wxStaticText* m_staticText195;
     wxBitmapToggleButton* m_btExpandImpulse;
@@ -219,6 +243,16 @@ protected:
     virtual void changeSliderY(wxScrollEvent& event) { event.Skip(); }
     virtual void updateValueZ(wxCommandEvent& event) { event.Skip(); }
     virtual void changeSliderZ(wxScrollEvent& event) { event.Skip(); }
+    virtual void updateTriggerI1(wxCommandEvent& event) { event.Skip(); }
+    virtual void updateTriggerF1(wxCommandEvent& event) { event.Skip(); }
+    virtual void updateTriggerI2(wxCommandEvent& event) { event.Skip(); }
+    virtual void updateTriggerF2(wxCommandEvent& event) { event.Skip(); }
+    virtual void updateTriggerI3(wxCommandEvent& event) { event.Skip(); }
+    virtual void updateTriggerF3(wxCommandEvent& event) { event.Skip(); }
+    virtual void enableSpecialSpeedDisplayHeight(wxCommandEvent& event) { event.Skip(); }
+    virtual void updateSpecialSpeedDisplayHeightValue(wxCommandEvent& event) { event.Skip(); }
+    virtual void enableSpecialAccelDisplayWidth(wxCommandEvent& event) { event.Skip(); }
+    virtual void updateSpecialAccelDisplayWidthValue(wxCommandEvent& event) { event.Skip(); }
     virtual void onChangeDisplayType(wxCommandEvent& event) { event.Skip(); }
     virtual void onTimer(wxTimerEvent& event) { event.Skip(); }
 
@@ -253,6 +287,23 @@ public:
     wxStaticText* GetStaticMinZ() { return m_staticMinZ; }
     wxSlider* GetSliderZ() { return m_sliderZ; }
     wxStaticText* GetStaticMaxZ() { return m_staticMaxZ; }
+    wxStaticText* GetStaticText313() { return m_staticText313; }
+    wxStaticLine* GetStaticLine14126() { return m_staticLine14126; }
+    wxStaticText* GetStaticText318() { return m_staticText318; }
+    wxTextCtrl* GetEbSpecialTriggerImpluse1() { return m_ebSpecialTriggerImpluse1; }
+    wxStaticText* GetStaticText320() { return m_staticText320; }
+    wxTextCtrl* GetEbSpecialTriggerSpeed1() { return m_ebSpecialTriggerSpeed1; }
+    wxStaticText* GetStaticText326() { return m_staticText326; }
+    wxStaticText* GetStaticText3188() { return m_staticText3188; }
+    wxTextCtrl* GetEbSpecialTriggerImpluse2() { return m_ebSpecialTriggerImpluse2; }
+    wxStaticText* GetStaticText32010() { return m_staticText32010; }
+    wxTextCtrl* GetEbSpecialTriggerSpeed2() { return m_ebSpecialTriggerSpeed2; }
+    wxStaticText* GetStaticText32613() { return m_staticText32613; }
+    wxStaticText* GetStaticText318815() { return m_staticText318815; }
+    wxTextCtrl* GetEbSpecialTriggerImpluse3() { return m_ebSpecialTriggerImpluse3; }
+    wxStaticText* GetStaticText3201018() { return m_staticText3201018; }
+    wxTextCtrl* GetEbSpecialTriggerSpeed3() { return m_ebSpecialTriggerSpeed3; }
+    wxStaticText* GetStaticText3261320() { return m_staticText3261320; }
     wxStaticText* GetStaticText14711() { return m_staticText14711; }
     wxStaticLine* GetStaticLine1412() { return m_staticLine1412; }
     wxStaticText* GetStaticText230385() { return m_staticText230385; }
@@ -275,7 +326,14 @@ public:
     wxStaticLine* GetStaticLine141() { return m_staticLine141; }
     wxCheckBox* GetCbWithAcceleration() { return m_cbWithAcceleration; }
     wxCheckBox* GetCbSpeedRelative() { return m_cbSpeedRelative; }
+    wxCheckBox* GetCbEnhancedTracing() { return m_cbEnhancedTracing; }
     wxCheckBox* GetCbRealtime() { return m_cbRealtime; }
+    wxCheckBox* GetCbSpecialSpeedDisplayHeight() { return m_cbSpecialSpeedDisplayHeight; }
+    wxTextCtrl* GetEbSpecialSpeedDisplayHeightValue() { return m_ebSpecialSpeedDisplayHeightValue; }
+    wxStaticText* GetStaticText302() { return m_staticText302; }
+    wxCheckBox* GetCbSpecialAccelDisplayWidth() { return m_cbSpecialAccelDisplayWidth; }
+    wxTextCtrl* GetEbSpecialAccelDisplayWidthValue() { return m_ebSpecialAccelDisplayWidthValue; }
+    wxStaticText* GetStaticText3025() { return m_staticText3025; }
     wxPanel* GetPanel98() { return m_panel98; }
     wxStaticLine* GetStaticLine294() { return m_staticLine294; }
     wxStaticText* GetStaticText195() { return m_staticText195; }
@@ -312,7 +370,7 @@ public:
     wxTextCtrl* GetLastTimestamp() { return m_lastTimestamp; }
     wxPanel* GetStatusPanel() { return m_statusPanel; }
     wxTimer* GetContinuousTimer() { return m_continuousTimer; }
-    CncSpeedPlaygroundBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CNC Speed & Acceleration Playground"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000,900), long style = wxDEFAULT_FRAME_STYLE);
+    CncSpeedPlaygroundBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CNC Speed & Acceleration Playground"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000,1200), long style = wxDEFAULT_FRAME_STYLE);
     virtual ~CncSpeedPlaygroundBase();
 };
 

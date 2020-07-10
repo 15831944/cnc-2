@@ -62,9 +62,9 @@ class CncArduinoController : public ArduinoCmdDecoderGetter,
     void                setPosReplyThreshold(uint16_t t)           { posReplyThreshold = t; }
     uint16_t            getPosReplyThreshold()              const  { return posReplyThreshold; }
 
-    bool                enableStepperPin(bool state = true);
-    bool                disableStepperPin()                        { return enableStepperPin(false); }
-    bool                enableStepperPinState();
+    bool                enableStepperPin(bool state = ENABLE_STATE_ON);
+    bool                disableStepperPin()                        { return enableStepperPin(ENABLE_STATE_OFF); }
+    bool                getEnableStepperPinState();
 
     bool                isAnyLimitActive();
     bool                evaluateLimitStates(int8_t& xLimit, int8_t& yLimit, int8_t& zLimit);

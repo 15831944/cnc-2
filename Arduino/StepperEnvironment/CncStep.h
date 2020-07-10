@@ -55,7 +55,7 @@ class CncArduinoStepper {
 
     int32_t                         curPos;
     
-    inline bool                     checkLimit(int dir);
+    inline bool                     isLimitPinOn();
     
     explicit CncArduinoStepper(const StepperSetup& ss);
     

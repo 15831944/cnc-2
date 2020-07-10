@@ -84,9 +84,9 @@ void CncManuallyMoveCoordinates::updateUnit() {
 ///////////////////////////////////////////////////////////////////
 	const wxString unit(THE_APP->GetUnit()->GetValue());
 	
-	double xLimit = +THE_CONFIG->getMaxDimensionX()/2; // [mm]
-	double yLimit = +THE_CONFIG->getMaxDimensionY()/2; // [mm]
-	double zLimit = +THE_CONFIG->getMaxDimensionZ()/2; // [mm]
+	double xLimit = +THE_CONFIG->getMaxDimensionX() * 0.8; // [mm]
+	double yLimit = +THE_CONFIG->getMaxDimensionY() * 0.8; // [mm]
+	double zLimit = +THE_CONFIG->getMaxDimensionZ() * 0.8; // [mm]
 	
 	auto setCommon = [&](double fact) {
 		double value; m_metricCommon->GetValue().ToDouble(&value);
